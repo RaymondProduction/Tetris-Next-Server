@@ -54,10 +54,14 @@ var userList = [];
 // список времени до отключения и удаления
 var userListTime = {};
 
-// координати кубов
-
-var x = [];
-var y = [];
+// карта расположения кубов
+var map = new Array();
+for (var i = 0; i < 100; i++) {
+  map[i] = new Array();
+  for (var j = 0; j < 100; j++) {
+    map[i][j] = '';
+  }
+}
 
 
 // Вывод в консоль уведомления о запуске сервера и ip веб сервера
@@ -168,46 +172,58 @@ io.on('connection', function(socket) {
     userListTime[n] = 6;
   });
 
+  // событие, создание куба
   socket.on('create cube', function(dataOfcube) {
     cube = JSON.parse(dataOfcube);
-    x[cube.x] = cube.color;
-    y[cube.y] = cube.color;
+    // поставим куб на карте
+    map[cube.x][cube.y] = cube.color;
   });
 
+  // событие от клиента, двигаем куб
   socket.on('move cube', function(dataOfcube) {
-    //undefined
     cube = JSON.parse(dataOfcube);
-
+    // получим текущие координты куба
     var xx = cube.x;
     var yy = cube.y;
-
+    // запомним кооординаты как те которы были ранее earlier
     cube.ex = xx;
     cube.ey = yy;
 
-    x[xx] = undefined;
-    y[yy] = undefined;
-
+    // обороботка нажатой клавиши клиентом
     var keyCode = cube.k;
 
-    if (keyCode == 37 && xx > 0) {
+    // изменяем координаты соответсвенно
+    if (keyCode == 37) {
       xx -= 1;
     }
-    if (keyCode == 38 && yy > 0) {
+    if (keyCode == 38) {
       yy -= 1;
     }
-    if (keyCode == 39 && xx < 30) {
+    if (keyCode == 39) {
       xx += 1;
     }
-    if (keyCode == 40 && yy < 30) {
+    if (keyCode == 40) {
       yy += 1;
     }
 
-    x[xx] = cube.color;
-    y[yy] = cube.color;
-
-    cube.x = xx;
-    cube.y = yy;
-    console.log(xx,yy);
+    // если занято то стоим
+    if (map[xx][yy] != '') {
+      // пометим свойсво предыдущих координат как неопределенные
+      // клиенская программа не будет перерисовывать куб в этом
+      // случае
+      cube.ex = undefined;
+      cube.ey = undefined;
+    } else {
+      // иначе двигаем
+      // убираем с предыдущего положения
+      map[cube.ex][cube.ey] = '';
+      // ставим на новое на карте
+      map[xx][yy] = cube.color;
+      // сохраняем новые коодинаты
+      cube.x = xx;
+      cube.y = yy;
+    }
+    // отправляем клиенту новое положение
     io.emit('server move', JSON.stringify(cube));
 
   });
