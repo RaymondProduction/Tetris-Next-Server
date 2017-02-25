@@ -54,6 +54,11 @@ var userList = [];
 // список времени до отключения и удаления
 var userListTime = {};
 
+// координати кубов
+
+var x = [];
+var y = [];
+
 
 // Вывод в консоль уведомления о запуске сервера и ip веб сервера
 console.log('Start Web Server'.green.bold, ' Local ip address is '.cyan, ip.address().cyan);
@@ -143,6 +148,7 @@ io.on('connection', function(socket) {
   });
 
 
+
   // от клиента пришло сообщение что он
   // покинул чат
   socket.on('the user leaves', function(name) {
@@ -160,6 +166,50 @@ io.on('connection', function(socket) {
   // в сети продлим время пребывание на 6 тиков
   socket.on('i am online', function(n) {
     userListTime[n] = 6;
+  });
+
+  socket.on('create cube', function(dataOfcube) {
+    cube = JSON.parse(dataOfcube);
+    x[cube.x] = cube.color;
+    y[cube.y] = cube.color;
+  });
+
+  socket.on('move cube', function(dataOfcube) {
+    //undefined
+    cube = JSON.parse(dataOfcube);
+
+    var xx = cube.x;
+    var yy = cube.y;
+
+    cube.ex = xx;
+    cube.ey = yy;
+
+    x[xx] = undefined;
+    y[yy] = undefined;
+
+    var keyCode = cube.k;
+
+    if (keyCode == 37 && xx > 0) {
+      xx -= 1;
+    }
+    if (keyCode == 38 && yy > 0) {
+      yy -= 1;
+    }
+    if (keyCode == 39 && xx < 30) {
+      xx += 1;
+    }
+    if (keyCode == 40 && yy < 30) {
+      yy += 1;
+    }
+
+    x[xx] = cube.color;
+    y[yy] = cube.color;
+
+    cube.x = xx;
+    cube.y = yy;
+    console.log(xx,yy);
+    io.emit('server move', JSON.stringify(cube));
+
   });
 
 });
