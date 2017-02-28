@@ -58,10 +58,12 @@ var userListTime = {};
 var map = new Array();
 for (var i = 0; i < 100; i++) {
   map[i] = new Array();
-  for (var j = 0; j < 100; j++) {
+  map[i][0]='rgb(50,50,50)';
+  for (var j = 1; j < 100; j++) {
     map[i][j] = '';
   }
 }
+for (var j=1;j<100;j++){map[0][j]='rgb(50,50,50)';};
 
 
 // Вывод в консоль уведомления о запуске сервера и ip веб сервера
