@@ -1,8 +1,9 @@
 // серверный модуль менеджмента сессий
-var ids = [];  // массив  идентификаторов id
+var ids = []; // массив  идентификаторов id
 var name = {}; // массив  имен [id]
 var timeTable = {}; // массив времени
-var numClient=0; // количество клиентов
+var numClient = 0; // количество клиентов
+var classCl = {};
 
 var io; // для обращения к socket
 
@@ -19,15 +20,19 @@ module.exports.startServices = function() {
   // если подключился клиент
   io.on('connection', function(socket) {
     // присоединился не авторизованный клиент
-    socket.on('connected', function(id) {
+    socket.on('connected', function(msg) {
+      data = JSON.parse(msg);
       // присвоим ему id
-      ids[numClient]=id;
+      ids[numClient] = data.id;
       // учтем количество клиентов
       numClient++;
       // ассоциативный массив, имя пользователя оп ключу
-      name[id]='';
+      name[data.id] = '';
       // таблица времени, установим 6 тиков
-      timeTable[id]=6;
+      timeTable[data.id] = 6;
+      // присвоить класс (тип)
+      classCl[data.id] = data.cl;
+      console.log(data.id, classCl[data.id]);
     });
 
     // если от клиента пришел запрос joined
@@ -43,18 +48,18 @@ module.exports.startServices = function() {
     });
 
     // запрос на получение списка клиентов
-    socket.on('get list',function(){
+    socket.on('get list', function(i) {
       // подготовим массив
       var list = [];
       // пробежим по всем id
-      ids.forEach(function(id){
+      ids.forEach(function(id) {
         // если имя есть, учтем в список
-        if (name[id]!='') {
+        if (name[id] != '' && classCl[id] == classCl[i]) {
           // создадим и положим объект
           // идентификатор + имя
           list.push({
-            id : id,
-            name : name[id],
+            id: id,
+            name: name[id],
           });
         }
       });
@@ -75,7 +80,10 @@ module.exports.startServices = function() {
     // покинул чат
     socket.on('the client leaves', function(id) {
       // отправим запрос всем чтоб все удалили из списка его
-      io.emit('the client delete from list', id);
+      io.emit('the client delete from list', JSON.stringify({
+        id: id,
+        cl: classCl[id],
+      }));
       // то удалим его из списка времени
       delete timeTable[id];
       // удалим со списка клиентов
@@ -99,7 +107,10 @@ module.exports.startServices = function() {
         delete timeTable[id];
         delete name[id];
         // отправим запрос всем чтоб все удалили из списка его
-        io.emit('the client leaves because time', id);
+        io.emit('the client leaves because time', JSON.stringify({
+          id: id,
+          cl: classCl[id],
+        }));
         // удалим со списка клиентов
         ids.splice(ids.indexOf(id), 1);
       } else {
@@ -111,18 +122,24 @@ module.exports.startServices = function() {
 
 }
 
+module.exports.nameById = function(id) {
+  return name[id];
+}
+
 module.exports.arrivedData = function(cl, call) {
   io.on('connection', function(socket) {
-    socket.on('send for ' + cl, function(massage) {
+    socket.on('send', function(massage) {
       var data = JSON.parse(massage);
-      call(data.id, data.obj);
+      if (cl == data.cl) {
+        call(data.id, data.obj);
+      };
     });
   });
 }
 
 module.exports.sendData = function(cl, id, obj) {
   data = {
-    id : id,
+    id: id,
     cl: cl,
     obj: obj,
   }
