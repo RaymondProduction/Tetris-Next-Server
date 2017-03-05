@@ -90,6 +90,21 @@ module.exports.startServices = function() {
       ids.splice(ids.indexOf(id), 1);
     });
 
+
+    socket.on('more information',function(){
+      io.emit('more information');
+    });
+
+
+    socket.on('joined more information',function(data){
+      io.emit('joined more information',data);
+    });
+
+    socket.on('more information about this',function(obj){
+      io.emit('more information about this',obj);
+    });
+
+
   });
 
   // делаем тики (интервалы) для проверки онлайн ли клиент
