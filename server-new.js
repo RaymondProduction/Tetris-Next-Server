@@ -79,7 +79,7 @@ session.arrivedData('chat',function(id,message){
   session.sendData('chat',id,message);
 });
 
-session.arrivedData('move cube',function(id,dataOfcube){
+session.arrivedData('cube',function(id,dataOfcube){
   var x = dataOfcube.x;
   var y = dataOfcube.y;
   if ( dataOfcube.k== 37) {x++};
@@ -87,7 +87,8 @@ session.arrivedData('move cube',function(id,dataOfcube){
   if ( dataOfcube.k== 39) {y++};
   if ( dataOfcube.k== 40) {y--};
 
-  session.sendData('move cube',{
+  console.log(session.nameById(id));
+  session.sendData('cube',id,{
     x : x,
     y : y,
     ex : dataOfcube.x,

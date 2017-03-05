@@ -143,5 +143,7 @@ module.exports.sendData = function(cl, id, obj) {
     cl: cl,
     obj: obj,
   }
+  console.log(data);
+  console.log(JSON.stringify(data));
   io.emit('data', JSON.stringify(data));
 }
