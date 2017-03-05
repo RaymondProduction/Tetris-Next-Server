@@ -32,7 +32,6 @@ module.exports.startServices = function() {
       timeTable[data.id] = 6;
       // присвоить класс (тип)
       classCl[data.id] = data.cl;
-      console.log(data.id, classCl[data.id]);
     });
 
     // если от клиента пришел запрос joined
@@ -143,7 +142,5 @@ module.exports.sendData = function(cl, id, obj) {
     cl: cl,
     obj: obj,
   }
-  console.log(data);
-  console.log(JSON.stringify(data));
   io.emit('data', JSON.stringify(data));
 }

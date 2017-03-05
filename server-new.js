@@ -82,12 +82,11 @@ session.arrivedData('chat',function(id,message){
 session.arrivedData('cube',function(id,dataOfcube){
   var x = dataOfcube.x;
   var y = dataOfcube.y;
-  if ( dataOfcube.k== 37) {x++};
-  if ( dataOfcube.k== 38) {x--};
-  if ( dataOfcube.k== 39) {y++};
-  if ( dataOfcube.k== 40) {y--};
+  if ( dataOfcube.k== 37) {x--};
+  if ( dataOfcube.k== 38) {y--};
+  if ( dataOfcube.k== 39) {x++};
+  if ( dataOfcube.k== 40) {y++};
 
-  console.log(session.nameById(id));
   session.sendData('cube',id,{
     x : x,
     y : y,
