@@ -5,7 +5,7 @@ var timeTable = {}; // массив времени
 var numClient = 0; // количество клиентов
 var classCl = {};
 
-leaveCall = function() {};
+var leaveCall;
 
 var io; // для обращения к socket
 
@@ -142,8 +142,8 @@ module.exports.startServices = function() {
 
 };
 
-module.exports.leaves = function(call) {
-  leavesCall = call;
+module.exports.leave = function(call) {
+  leaveCall = call;
 };
 
 module.exports.nameById = function(id) {

@@ -93,9 +93,16 @@ for (var i = 0; i < 100; i++) {
 xCube = {};
 yCube = {};
 
-// пока не работает
-session.leaves(function(){
-  console.log('leave');
+// удалить, та как уже ушел этот в офлайн
+session.leave(function(id,cl){
+  session.sendData('cube',id,{
+    why : 'time',
+    x: xCube[id],
+    y: yCube[id],
+  });
+  map[xCube[id]][yCube[id]]='';
+  delete xCube[id];
+  delete yCube[id];
 });
 
 session.arrivedData('cube', function(id, dataOfcube) {
@@ -135,16 +142,16 @@ session.arrivedData('cube', function(id, dataOfcube) {
     var x = dataOfcube.x;
     var y = dataOfcube.y;
     if (dataOfcube.k == 37 && map[x - 1][y] == '' && x > 1) {
-      x--
+      x-=1;
     };
     if (dataOfcube.k == 38 && map[x][y - 1] == '' && y > 1) {
-      y--
+      y-=1;
     };
     if (dataOfcube.k == 39 && map[x + 1][y] == '' && x < 99) {
-      x++
+      x+=1;
     };
     if (dataOfcube.k == 40 && map[x][y + 1] == '' && y < 99) {
-      y++
+      y+=1;
     };
 
     map[dataOfcube.x][dataOfcube.y] = '';
