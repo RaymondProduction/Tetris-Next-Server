@@ -44,6 +44,7 @@ var staticContent = {
 // Вывод в консоль уведомления о запуске сервера и ip веб сервера
 console.log('Start Web Server'.green.bold, ' Local ip address is '.cyan, ip.address().cyan);
 
+// Ругается eslint 47:17  error  Parsing error: Unexpected token *
 app.use(function*(next) {
   yield next;
   var url = this.url;

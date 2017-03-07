@@ -5,13 +5,13 @@ var timeTable = {}; // массив времени
 var numClient = 0; // количество клиентов
 var classCl = {};
 
-leaveCall = function(){};
+leaveCall = function() {};
 
 var io; // для обращения к socket
 
 // подключение к socket, передаем через аргумент
 module.exports.socket = function(i) {
-  io = i
+  io = i;
 };
 
 // запуск всех обработчиков и слушателей
@@ -93,17 +93,17 @@ module.exports.startServices = function() {
     });
 
 
-    socket.on('more information',function(){
+    socket.on('more information', function() {
       io.emit('more information');
     });
 
 
-    socket.on('joined more information',function(data){
-      io.emit('joined more information',data);
+    socket.on('joined more information', function(data) {
+      io.emit('joined more information', data);
     });
 
-    socket.on('more information about this',function(obj){
-      io.emit('more information about this',obj);
+    socket.on('more information about this', function(obj) {
+      io.emit('more information about this', obj);
     });
 
 
@@ -140,15 +140,15 @@ module.exports.startServices = function() {
     });
   }, 2000);
 
-}
+};
 
-module.exports.leaves = function(call){
+module.exports.leaves = function(call) {
   leavesCall = call;
-}
+};
 
 module.exports.nameById = function(id) {
   return name[id];
-}
+};
 
 module.exports.arrivedData = function(cl, call) {
   io.on('connection', function(socket) {
@@ -159,30 +159,30 @@ module.exports.arrivedData = function(cl, call) {
       };
     });
   });
-}
+};
 
 module.exports.sendData = function(cl, id, obj) {
   data = {
     id: id,
     cl: cl,
     obj: obj,
-  }
+  };
   io.emit('data', JSON.stringify(data));
-}
+};
 
-module.exports.getListIdByClass = function(cl){
-      var list = [];
-      // пробежим по всем id
-      ids.forEach(function(id) {
-        // если имя есть, учтем в список
-        if (name[id] != '' && classCl[id] == cl) {
-          // создадим и положим объект
-          // идентификатор + имя
-          list.push({
-            id: id,
-            name: name[id],
-          });
-        }
+module.exports.getListIdByClass = function(cl) {
+  var list = [];
+  // пробежим по всем id
+  ids.forEach(function(id) {
+    // если имя есть, учтем в список
+    if (name[id] != '' && classCl[id] == cl) {
+      // создадим и положим объект
+      // идентификатор + имя
+      list.push({
+        id: id,
+        name: name[id],
       });
-      return list;
-}
+    }
+  });
+  return list;
+};
