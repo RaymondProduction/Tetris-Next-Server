@@ -40,20 +40,6 @@ var staticContent = {
 };
 
 
-// объект с данными
-var data = {
-  name: '',
-  massage: '',
-  list: [],
-  status: ''
-}
-
-// список клиентов который хранится на сервере
-var userList = [];
-
-// список времени до отключения и удаления
-var userListTime = {};
-
 
 // Вывод в консоль уведомления о запуске сервера и ip веб сервера
 console.log('Start Web Server'.green.bold, ' Local ip address is '.cyan, ip.address().cyan);
@@ -80,6 +66,105 @@ app.use(function*(next) {
 
 
 
+// мой модуль
+var session = require('./session');
+
+session.socket(io);
+session.startServices();
+
+
+session.arrivedData('chat', function(id, message) {
+  session.sendData('chat', id, message);
+});
+
+
+
+// карта расположения кубов
+var map = new Array();
+for (var i = 0; i < 100; i++) {
+  map[i] = new Array();
+  for (var j = 0; j < 100; j++) {
+    map[i][j] = '';
+  }
+}
+
+// ассоциативные массивы, положение куба по id
+xCube = {};
+yCube = {};
+
+// пока не работает
+session.leaves(function(){
+  console.log('leave');
+});
+
+session.arrivedData('cube', function(id, dataOfcube) {
+  // запрос на список
+  if (dataOfcube.why == 'list') {
+    // узнаем список id, для класса 'cube'
+    var list = session.getListIdByClass('cube');
+    // заполним список координатами и цветами кубов
+    var listForSend = [];
+    list.forEach(function(c) {
+      listForSend.push({
+        x: xCube[c.id],
+        y: yCube[c.id],
+        color: map[xCube[c.id]][yCube[c.id]],
+      });
+    });
+    session.sendData('cube', id, {
+      list : listForSend,
+      why: 'list',
+    });
+
+  }
+  // запрос "поставить" куб всем пользователям
+  if (dataOfcube.why == 'put') {
+    map[dataOfcube.x][dataOfcube.y] = dataOfcube.color;
+    xCube[id] = dataOfcube.x;
+    yCube[id] = dataOfcube.y;
+    session.sendData('cube', id, {
+      x: dataOfcube.x,
+      y: dataOfcube.y,
+      why: 'put',
+      color: dataOfcube.color,
+    });
+  }
+  // запрос "переместить куб"
+  if (dataOfcube.why == 'move') {
+    var x = dataOfcube.x;
+    var y = dataOfcube.y;
+    if (dataOfcube.k == 37 && map[x - 1][y] == '' && x > 1) {
+      x--
+    };
+    if (dataOfcube.k == 38 && map[x][y - 1] == '' && y > 1) {
+      y--
+    };
+    if (dataOfcube.k == 39 && map[x + 1][y] == '' && x < 99) {
+      x++
+    };
+    if (dataOfcube.k == 40 && map[x][y + 1] == '' && y < 99) {
+      y++
+    };
+
+    map[dataOfcube.x][dataOfcube.y] = '';
+    map[x][y] = dataOfcube.color;
+    xCube[id]=x;
+    yCube[id]=y;
+
+    session.sendData('cube', id, {
+      x: x,
+      y: y,
+      ex: dataOfcube.x,
+      ey: dataOfcube.y,
+      why: 'move',
+      color: session.nameById(id),
+    });
+
+  }
+});
+
+
+
 io.on('join', function*() {
   console.log('join event fired', this.data)
 })
@@ -95,94 +180,6 @@ io.on('connection', function(socket) {
   });
 
 });
-
-// вывод входящих сообщений на консоль
-io.on('connection', function(socket) {
-  socket.on('chat message', function(msg) {
-    console.log('Socket=>'.blue, ' message: ' + msg);
-  });
-
-  socket.on('joined the chat', function(msg) {
-    console.log('Socket=>'.blue, ' joined the chat');
-  });
-});
-
-// отправка методом emit входящих сообщений назад
-io.on('connection', function(socket) {
-  socket.on('chat message', function(msg) {
-    data = JSON.parse(msg);
-    msg = JSON.stringify(data);
-    io.emit('chat message', msg);
-  });
-
-  // если подключился пока неизвестный пользователь
-  socket.on('connected', function(msg) {
-    // скопируем список всех пользователей на сервере
-    data.list = userList.slice();
-    // подготовим строку JSON
-    msg = JSON.stringify(data);
-    // отправим ее клиенту
-    io.emit('someone connected', msg);
-  });
-
-  // зарегестрированый пользователь
-  socket.on('joined the chat', function(msg) {
-    // покдлючаем данные в которых самая полезная информация
-    // это имя нового пользователя
-    data = JSON.parse(msg);
-    // добавим с массив это имя
-    userList.push(data.name);
-    // добавим в список времени, даем 6 тиков
-    userListTime[data.name] = 6;
-    // скопируем в данные весь список
-    data.list = userList.slice();
-    // конвертируем в строку JSON
-    msg = JSON.stringify(data);
-    // отправим клиенту
-    io.emit('joined the chat', msg);
-  });
-
-
-  // от клиента пришло сообщение что он
-  // покинул чат
-  socket.on('the user leaves', function(name) {
-    // то удалим его из списка времени
-    delete userListTime[name];
-    // удалим со списка клиентов
-    userList.splice(userList.indexOf(name), 1);
-    // отправим запрос всем чтоб все удалили из списка его
-    io.emit('the user leaves', name);
-  });
-
-
-
-  // если клиент (пользователь) отвечает что он
-  // в сети продлим время пребывание на 6 тиков
-  socket.on('i am online', function(n) {
-    userListTime[n] = 6;
-  });
-
-});
-
-// делаем тики (интервалы) для проверки онлайн ли клиент
-setInterval(function() {
-  // пробегаем по всему списку клиентов
-  userList.forEach(function(name) {
-    // уменьшаем время пребибывания на 1
-    userListTime[name] = userListTime[name] - 1;
-    if (userListTime[name] < 1) {
-      // если время вышло, то удалим его
-      delete userListTime[name];
-      // удалим со списка клиентов
-      userList.splice(userList.indexOf(name), 1);
-      // отправим запрос всем чтоб все удалили из списка его
-      io.emit('the user leaves', name);
-    } else {
-      // если время еще не вышло спросить может он онлайн все же
-      io.emit('are you online', name);
-    }
-  });
-}, 2000)
 
 
 

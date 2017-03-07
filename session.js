@@ -5,6 +5,8 @@ var timeTable = {}; // массив времени
 var numClient = 0; // количество клиентов
 var classCl = {};
 
+leaveCall = function(){};
+
 var io; // для обращения к socket
 
 // подключение к socket, передаем через аргумент
@@ -125,6 +127,10 @@ module.exports.startServices = function() {
           id: id,
           cl: classCl[id],
         }));
+        // серверу тоже скажем чтоб удалил
+        if (leaveCall != undefined) {
+          leaveCall(id, classCl[id]);
+        }
         // удалим со списка клиентов
         ids.splice(ids.indexOf(id), 1);
       } else {
@@ -134,6 +140,10 @@ module.exports.startServices = function() {
     });
   }, 2000);
 
+}
+
+module.exports.leaves = function(call){
+  leavesCall = call;
 }
 
 module.exports.nameById = function(id) {
@@ -158,4 +168,21 @@ module.exports.sendData = function(cl, id, obj) {
     obj: obj,
   }
   io.emit('data', JSON.stringify(data));
+}
+
+module.exports.getListIdByClass = function(cl){
+      var list = [];
+      // пробежим по всем id
+      ids.forEach(function(id) {
+        // если имя есть, учтем в список
+        if (name[id] != '' && classCl[id] == cl) {
+          // создадим и положим объект
+          // идентификатор + имя
+          list.push({
+            id: id,
+            name: name[id],
+          });
+        }
+      });
+      return list;
 }
