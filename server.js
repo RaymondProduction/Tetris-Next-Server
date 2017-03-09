@@ -93,10 +93,10 @@ for (var i = 0; i < 100; i++) {
 xCube = {};
 yCube = {};
 
-// удалить, та как уже ушел этот в офлайн
+// удалить, та как уже ушел этот в оффлайн
 session.leave(function(id, cl) {
   session.sendData('cube', id, {
-    why: 'time',
+    why: 'leave',
     x: xCube[id],
     y: yCube[id],
   });
@@ -106,17 +106,6 @@ session.leave(function(id, cl) {
 });
 
 session.arrivedData('cube', function(id, dataOfcube) {
-  if (dataOfcube.why == 'close window') {
-    session.sendData('cube', id, {
-      why: 'close window',
-      x: xCube[id],
-      y: yCube[id],
-    });
-    map[xCube[id]][yCube[id]] = '';
-    delete xCube[id];
-    delete yCube[id];
-  }
-
 
   // запрос на список
   if (dataOfcube.why == 'list') {

@@ -80,6 +80,10 @@ module.exports.startServices = function() {
     // от клиента пришло сообщение что он
     // покинул чат
     socket.on('the client leaves', function(id) {
+      // вызовем функцию удаления сервера
+      if (leaveCall != undefined) {
+        leaveCall(id, classCl[id]);
+      }
       // отправим запрос всем чтоб все удалили из списка его
       io.emit('the client delete from list', JSON.stringify({
         id: id,
@@ -91,7 +95,6 @@ module.exports.startServices = function() {
       delete name[id];
       ids.splice(ids.indexOf(id), 1);
     });
-
 
     socket.on('more information', function() {
       io.emit('more information');
