@@ -94,18 +94,30 @@ xCube = {};
 yCube = {};
 
 // удалить, та как уже ушел этот в офлайн
-session.leave(function(id,cl){
-  session.sendData('cube',id,{
-    why : 'time',
+session.leave(function(id, cl) {
+  session.sendData('cube', id, {
+    why: 'time',
     x: xCube[id],
     y: yCube[id],
   });
-  map[xCube[id]][yCube[id]]='';
+  map[xCube[id]][yCube[id]] = '';
   delete xCube[id];
   delete yCube[id];
 });
 
 session.arrivedData('cube', function(id, dataOfcube) {
+  if (dataOfcube.why == 'close window') {
+    session.sendData('cube', id, {
+      why: 'close window',
+      x: xCube[id],
+      y: yCube[id],
+    });
+    map[xCube[id]][yCube[id]] = '';
+    delete xCube[id];
+    delete yCube[id];
+  }
+
+
   // запрос на список
   if (dataOfcube.why == 'list') {
     // узнаем список id, для класса 'cube'
@@ -120,7 +132,7 @@ session.arrivedData('cube', function(id, dataOfcube) {
       });
     });
     session.sendData('cube', id, {
-      list : listForSend,
+      list: listForSend,
       why: 'list',
     });
 
@@ -142,22 +154,22 @@ session.arrivedData('cube', function(id, dataOfcube) {
     var x = dataOfcube.x;
     var y = dataOfcube.y;
     if (dataOfcube.k == 37 && map[x - 1][y] == '' && x > 1) {
-      x-=1;
+      x -= 1;
     };
     if (dataOfcube.k == 38 && map[x][y - 1] == '' && y > 1) {
-      y-=1;
+      y -= 1;
     };
     if (dataOfcube.k == 39 && map[x + 1][y] == '' && x < 99) {
-      x+=1;
+      x += 1;
     };
     if (dataOfcube.k == 40 && map[x][y + 1] == '' && y < 99) {
-      y+=1;
+      y += 1;
     };
 
     map[dataOfcube.x][dataOfcube.y] = '';
     map[x][y] = dataOfcube.color;
-    xCube[id]=x;
-    yCube[id]=y;
+    xCube[id] = x;
+    yCube[id] = y;
 
     session.sendData('cube', id, {
       x: x,
