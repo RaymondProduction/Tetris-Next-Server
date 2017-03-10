@@ -72,7 +72,7 @@ var io = require('socket.io').listen(server);
 session.socket(io);
 ```
 
-**session.startServices()** - запуск, всех сервисов для отслеживания клиентской активности, опросы кото подключен, кто отключился и присоединился и дополнительный анализ времени пребывания онлайн.
+**session.startServices()** - запуск, всех сервисов для отслеживания клиентской активности, опросы кто подключен, кто отключился и присоединился и дополнительный анализ времени пребывания онлайн.
 
  session.sendData('chat',id,message) - отправка сообщения, первый аргумент это тип сообщения, вторые два ид отправителя, и сообщение
 
@@ -80,5 +80,14 @@ session.socket(io);
 ```
 session.arrivedData('chat',function(id,message){
   session.sendData('chat',id,message);
+});
+```
+
+**session.nameById(id)** - получить имя клиента по id.
+**session.getListIdByClass(cl)** - получить список id и имен по типу/классу. Список представляет собой массив объектов {id, name}
+**session.leave(call(id,cl))** - вызов обратной функции если кто то покинул чат, с передачей в качестве аргументов номер id и тип/клас cl.
+```
+session.leave(function(id, cl) {
+ console.log(id,cl);
 });
 ```
