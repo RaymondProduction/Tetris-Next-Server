@@ -40,35 +40,11 @@ var staticContent = {
 };
 
 
-// объект с данными
-var data = {
-  name: '',
-  massage: '',
-  list: [],
-  status: ''
-}
-
-// список клиентов который хранится на сервере
-var userList = [];
-
-// список времени до отключения и удаления
-var userListTime = {};
-
-// карта расположения кубов
-var map = new Array();
-for (var i = 0; i < 100; i++) {
-  map[i] = new Array();
-  map[i][0]='rgb(50,50,50)';
-  for (var j = 1; j < 100; j++) {
-    map[i][j] = '';
-  }
-}
-for (var j=1;j<100;j++){map[0][j]='rgb(50,50,50)';};
-
 
 // Вывод в консоль уведомления о запуске сервера и ip веб сервера
 console.log('Start Web Server'.green.bold, ' Local ip address is '.cyan, ip.address().cyan);
 
+// Ругается eslint 47:17  error  Parsing error: Unexpected token *
 app.use(function*(next) {
   yield next;
   var url = this.url;
@@ -91,6 +67,115 @@ app.use(function*(next) {
 
 
 
+// мой модуль
+var session = require('./session');
+
+session.socket(io);
+session.startServices();
+
+
+session.arrivedData('chat', function(id, message) {
+  session.sendData('chat', id, message);
+});
+
+
+
+// карта расположения кубов
+var map = new Array();
+for (var i = 0; i < 100; i++) {
+  map[i] = new Array();
+  for (var j = 0; j < 100; j++) {
+    map[i][j] = '';
+  }
+}
+
+// ассоциативные массивы, положение куба по id
+xCube = {};
+yCube = {};
+
+// удалить, та как уже ушел этот в оффлайн
+session.leave(function(id, cl) {
+  if (cl == 'cube') {
+    session.sendData('cube', id, {
+      why: 'leave',
+      x: xCube[id],
+      y: yCube[id],
+    });
+    map[xCube[id]][yCube[id]] = '';
+    delete xCube[id];
+    delete yCube[id];
+  }
+});
+
+session.arrivedData('cube', function(id, dataOfcube) {
+
+  // запрос на список
+  if (dataOfcube.why == 'list') {
+    // узнаем список id, для класса 'cube'
+    var list = session.getListIdByClass('cube');
+    // заполним список координатами и цветами кубов
+    var listForSend = [];
+    list.forEach(function(c) {
+      listForSend.push({
+        x: xCube[c.id],
+        y: yCube[c.id],
+        color: map[xCube[c.id]][yCube[c.id]],
+      });
+    });
+    session.sendData('cube', id, {
+      list: listForSend,
+      why: 'list',
+    });
+
+  }
+  // запрос "поставить" куб всем пользователям
+  if (dataOfcube.why == 'put') {
+    map[dataOfcube.x][dataOfcube.y] = dataOfcube.color;
+    xCube[id] = dataOfcube.x;
+    yCube[id] = dataOfcube.y;
+    session.sendData('cube', id, {
+      x: dataOfcube.x,
+      y: dataOfcube.y,
+      why: 'put',
+      color: dataOfcube.color,
+    });
+  }
+  // запрос "переместить куб"
+  if (dataOfcube.why == 'move') {
+    var x = dataOfcube.x;
+    var y = dataOfcube.y;
+    if (dataOfcube.k == 37 && map[x - 1][y] == '' && x > 1) {
+      x -= 1;
+    };
+    if (dataOfcube.k == 38 && map[x][y - 1] == '' && y > 1) {
+      y -= 1;
+    };
+    if (dataOfcube.k == 39 && map[x + 1][y] == '' && x < 99) {
+      x += 1;
+    };
+    if (dataOfcube.k == 40 && map[x][y + 1] == '' && y < 99) {
+      y += 1;
+    };
+
+    map[dataOfcube.x][dataOfcube.y] = '';
+    map[x][y] = dataOfcube.color;
+    xCube[id] = x;
+    yCube[id] = y;
+
+    session.sendData('cube', id, {
+      x: x,
+      y: y,
+      ex: dataOfcube.x,
+      ey: dataOfcube.y,
+      why: 'move',
+      color: session.nameById(id),
+    });
+
+  }
+});
+
+
+
 io.on('join', function*() {
   console.log('join event fired', this.data)
 })
@@ -106,151 +191,6 @@ io.on('connection', function(socket) {
   });
 
 });
-
-// вывод входящих сообщений на консоль
-io.on('connection', function(socket) {
-  socket.on('chat message', function(msg) {
-    console.log('Socket=>'.blue, ' message: ' + msg);
-  });
-
-  socket.on('joined the chat', function(msg) {
-    console.log('Socket=>'.blue, ' joined the chat');
-  });
-});
-
-// отправка методом emit входящих сообщений назад
-io.on('connection', function(socket) {
-  socket.on('chat message', function(msg) {
-    data = JSON.parse(msg);
-    msg = JSON.stringify(data);
-    io.emit('chat message', msg);
-  });
-
-  // если подключился пока неизвестный пользователь
-  socket.on('connected', function(msg) {
-    // скопируем список всех пользователей на сервере
-    data.list = userList.slice();
-    // подготовим строку JSON
-    msg = JSON.stringify(data);
-    // отправим ее клиенту
-    io.emit('someone connected', msg);
-  });
-
-  // зарегестрированый пользователь
-  socket.on('joined the chat', function(msg) {
-    // покдлючаем данные в которых самая полезная информация
-    // это имя нового пользователя
-    data = JSON.parse(msg);
-    // добавим с массив это имя
-    userList.push(data.name);
-    // добавим в список времени, даем 6 тиков
-    userListTime[data.name] = 6;
-    // скопируем в данные весь список
-    data.list = userList.slice();
-    // конвертируем в строку JSON
-    msg = JSON.stringify(data);
-    // отправим клиенту
-    io.emit('joined the chat', msg);
-  });
-
-
-
-  // от клиента пришло сообщение что он
-  // покинул чат
-  socket.on('the user leaves', function(name) {
-    // то удалим его из списка времени
-    delete userListTime[name];
-    // удалим со списка клиентов
-    userList.splice(userList.indexOf(name), 1);
-    // отправим запрос всем чтоб все удалили из списка его
-    io.emit('the user leaves', name);
-  });
-
-
-
-  // если клиент (пользователь) отвечает что он
-  // в сети продлим время пребывание на 6 тиков
-  socket.on('i am online', function(n) {
-    userListTime[n] = 6;
-  });
-
-  // событие, создание куба
-  socket.on('create cube', function(dataOfcube) {
-    cube = JSON.parse(dataOfcube);
-    // поставим куб на карте
-    map[cube.x][cube.y] = cube.color;
-  });
-
-  // событие от клиента, двигаем куб
-  socket.on('move cube', function(dataOfcube) {
-    cube = JSON.parse(dataOfcube);
-    // получим текущие координты куба
-    var xx = cube.x;
-    var yy = cube.y;
-    // запомним кооординаты как те которы были ранее earlier
-    cube.ex = xx;
-    cube.ey = yy;
-
-    // обороботка нажатой клавиши клиентом
-    var keyCode = cube.k;
-
-    // изменяем координаты соответсвенно
-    if (keyCode == 37) {
-      xx -= 1;
-    }
-    if (keyCode == 38) {
-      yy -= 1;
-    }
-    if (keyCode == 39) {
-      xx += 1;
-    }
-    if (keyCode == 40) {
-      yy += 1;
-    }
-
-    // если занято то стоим
-    if (map[xx][yy] != '') {
-      // пометим свойсво предыдущих координат как неопределенные
-      // клиенская программа не будет перерисовывать куб в этом
-      // случае
-      cube.ex = undefined;
-      cube.ey = undefined;
-    } else {
-      // иначе двигаем
-      // убираем с предыдущего положения
-      map[cube.ex][cube.ey] = '';
-      // ставим на новое на карте
-      map[xx][yy] = cube.color;
-      // сохраняем новые коодинаты
-      cube.x = xx;
-      cube.y = yy;
-    }
-    // отправляем клиенту новое положение
-    io.emit('server move', JSON.stringify(cube));
-
-  });
-
-});
-
-// делаем тики (интервалы) для проверки онлайн ли клиент
-setInterval(function() {
-  // пробегаем по всему списку клиентов
-  userList.forEach(function(name) {
-    // уменьшаем время пребибывания на 1
-    userListTime[name] = userListTime[name] - 1;
-    if (userListTime[name] < 1) {
-      // если время вышло, то удалим его
-      delete userListTime[name];
-      // удалим со списка клиентов
-      userList.splice(userList.indexOf(name), 1);
-      // отправим запрос всем чтоб все удалили из списка его
-      io.emit('the user leaves', name);
-    } else {
-      // если время еще не вышло спросить может он онлайн все же
-      io.emit('are you online', name);
-    }
-  });
-}, 2000)
 
 
 
