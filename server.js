@@ -95,14 +95,16 @@ yCube = {};
 
 // удалить, та как уже ушел этот в оффлайн
 session.leave(function(id, cl) {
-  session.sendData('cube', id, {
-    why: 'leave',
-    x: xCube[id],
-    y: yCube[id],
-  });
-  map[xCube[id]][yCube[id]] = '';
-  delete xCube[id];
-  delete yCube[id];
+  if (cl == 'cube') {
+    session.sendData('cube', id, {
+      why: 'leave',
+      x: xCube[id],
+      y: yCube[id],
+    });
+    map[xCube[id]][yCube[id]] = '';
+    delete xCube[id];
+    delete yCube[id];
+  }
 });
 
 session.arrivedData('cube', function(id, dataOfcube) {
