@@ -7,17 +7,6 @@ var app = require('koa')();
 // определим номер порта, чере ключ в командной строке
 var port = parametr('--port');
 
-//  если порта нет то используем по умолчянию 8080
-if (port) {
-  server = app.listen(Number(port));
-} else {
-  server = app.listen(8080);
-}
-
-// это важно! подключаем сокет к серверу
-// сокет - розетка, модуль для мгновенной
-// передачи данных
-var io = require('socket.io').listen(server);
 
 // модуль для роботы с файловой системной
 // так как сервер будет использовать файлы
@@ -25,6 +14,40 @@ var fs = require('fs');
 // используем модуль path для роботы
 // с путями к файлам
 var path = require('path');
+
+// подключаем сертификаты и возможность использовать
+// https
+var http = require('http');
+var https = require('https');
+var forceSSL = require('koa-force-ssl')
+// SSL options
+var options = {
+  // Сертификат и ключ генерировались с помощью команд
+  // Certificate and key generating with commands
+  // openssl req -newkey rsa:2048 -new -nodes -keyout key.pem -out csr.pem
+  // openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out server.crt
+  key: fs.readFileSync('./key.pem', 'utf8'),
+  cert: fs.readFileSync('./server.crt', 'utf8')
+};
+
+// start the server
+http.createServer(app.callback()).listen(3000); //80
+
+
+
+
+//  если порта нет то используем по умолчянию 8080
+if (port) {
+  server = https.createServer(options, app.callback()).listen(Number(port)); //443
+} else {
+  server = https.createServer(options, app.callback()).listen(8080); //443
+}
+
+// это важно! подключаем сокет к серверу
+// сокет - розетка, модуль для мгновенной
+// передачи данных
+var io = require('socket.io').listen(server);
+
 
 var buf; // буфер байт из файла
 var str; // строка из файла

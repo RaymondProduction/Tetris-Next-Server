@@ -27,5 +27,3 @@ var options = {
 // start the server
 http.createServer(app.callback()).listen(3000); //80
 https.createServer(options, app.callback()).listen(3001); //443
-// var httpserver = http.createServer(app).listen('3004', '127.0.0.1');
-// var https_server = https.createServer(options, app).listen('3005', '127.0.0.1');
