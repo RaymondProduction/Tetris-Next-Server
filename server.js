@@ -12,6 +12,24 @@ var colors = require('colors');
 var ip = require('ip');
 // web framework for node.js
 var app = require('koa')();
+
+
+// Подключаем роутер
+var Router = require('koa-router');
+var bodyparser = require('koa-bodyparser');
+// Контроллер для авторизации
+const authController = require('./controllers/auth');
+var router = new Router();
+// Enable body parsing.
+app.use(bodyparser());
+//  for oauth callback
+router
+  .get('/oauth', authController.forAccessToken());
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods())
+
 // определим номер порта, чере ключ в командной строке
 var port = parametr('--port');
 
