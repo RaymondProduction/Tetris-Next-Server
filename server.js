@@ -1,3 +1,11 @@
+// модуль для роботы с файловой системной
+// так как сервер будет использовать файлы
+var fs = require('fs');
+// загружаем client_id, client_secret из файла config.json
+const client = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+
+console.log(client.client_id);
+
 // модуль для цвета
 var colors = require('colors');
 // модуль для роботы с ip адресами
@@ -7,10 +15,6 @@ var app = require('koa')();
 // определим номер порта, чере ключ в командной строке
 var port = parametr('--port');
 
-
-// модуль для роботы с файловой системной
-// так как сервер будет использовать файлы
-var fs = require('fs');
 // используем модуль path для роботы
 // с путями к файлам
 var path = require('path');
