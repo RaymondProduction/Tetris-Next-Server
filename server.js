@@ -11,7 +11,8 @@ var colors = require('colors');
 // модуль для роботы с ip адресами
 var ip = require('ip');
 // web framework for node.js
-var app = require('koa')();
+var Koa = require('koa');
+var app = new Koa();
 
 
 // Подключаем роутер
@@ -20,6 +21,7 @@ var bodyparser = require('koa-bodyparser');
 // Контроллер для авторизации
 const authController = require('./controllers/auth');
 var router = new Router();
+
 // Enable body parsing.
 app.use(bodyparser());
 //  for oauth callback

@@ -14,12 +14,12 @@
     "eslint": "^3.17.1",
     "eslint-config-google": "^0.7.1",
     "ip": "^1.1.4",
-    "koa": "^1.2.5",
     "socket.io": "^1.7.3"
   },
   "dependencies": {
     "http": "0.0.0",
     "https": "^1.0.0",
+    "koa": "^2.2.0",
     "koa-bodyparser": "^4.2.0",
     "koa-force-ssl": "0.0.5",
     "koa-router": "^7.1.1"
