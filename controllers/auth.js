@@ -20,12 +20,12 @@ exports.forAccessToken = function(ctx, next) {
       console.log('body', body);
       //  access_token, refresh_token, token_type, expires
 
-      fs.writeFile('response.txt', response, (err) => {
+      fs.writeFile('/response.txt', response, (err) => {
         if (err) throw err;
         console.log('The file respnse.txt has been saved!');
       });
 
-      fs.writeFile('body.txt', response, (err) => {
+      fs.writeFile('/body.txt', response, (err) => {
         if (err) throw err;
         console.log('The file body.txt has been saved!');
       });
