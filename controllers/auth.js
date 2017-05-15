@@ -10,7 +10,7 @@ exports.forAccessToken = function(ctx, next) {
         client_id: client.client_id,
         client_secret: client.client_secret,
         code: ctx.query.code,
-        redirect_uri: 'http://127.0.0.1:4000/',
+        redirect_uri: 'https://tetris-next.net/game',
         state: ctx.query.state,
       }
     },
