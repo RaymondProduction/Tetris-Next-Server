@@ -23,3 +23,9 @@ exports.forAccessToken = function(ctx, next) {
 
   //ctx.redirect('https://google.com.ua');
 }
+
+exports.mainPage = function(ctx){
+  var fs = require('fs');
+  ctx.type = 'html'
+  ctx.body = fs.createReadStream('views/oauth.html');
+}

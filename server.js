@@ -21,7 +21,8 @@ var router = new Router();
 app.use(bodyparser());
 //  for oauth callback
 router
-  .get('/oauth', authController.forAccessToken());
+  .get('/oauth', authController.forAccessToken)
+  .get('/', authController.mainPage);
 
 app
   .use(router.routes())
