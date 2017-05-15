@@ -29,3 +29,7 @@ exports.mainPage = function(ctx){
   ctx.type = 'html'
   ctx.body = fs.createReadStream('views/oauth.html');
 }
+
+exports.accessToken = function(ctx, next){
+  console.log('request!!!! =>',ctx.request.body);
+}
