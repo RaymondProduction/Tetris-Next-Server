@@ -18,6 +18,17 @@ exports.forAccessToken = function(ctx, next) {
       console.log('error:', error); // Print the error if one occurred
       console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
       console.log('body:', body); // Print the HTML for the Google homepage.
+
+      console.log('access_token', response.access_token);
+      console.log('refresh_token', response.refresh_token);
+      console.log('token_type', response.token_type);
+      console.log('expires', response.exports);
+
+      console.log('access_token', body.access_token);
+      console.log('refresh_token', body.refresh_token);
+      console.log('token_type', body.token_type);
+      console.log('expires', body.exports);
+      //  access_token, refresh_token, token_type, expires
     });
 
 
