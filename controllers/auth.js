@@ -12,13 +12,17 @@ exports.forAccessToken = function(ctx, next) {
         code: ctx.query.code,
         redirect_uri: 'https://tetris-next.net/oauth',
         state: ctx.query.state,
+      },
+      headers: {
+        accept: 'application/json'
       }
     },
     function(error, response, body) {
       // var fs = require('fs');
       console.log(body);
-      console.log('token_type', body.query.token_type);
-      console.log('access_token', body.query.access_token);
+
+      console.log('token_type', body.token_type);
+      console.log('access_token', body.access_token);
       //  access_token, refresh_token, token_type, expires
 
       // fs.writeFile('/response.txt', JSON.stringify(response), (err) => {
