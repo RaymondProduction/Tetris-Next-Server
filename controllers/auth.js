@@ -15,20 +15,20 @@ exports.forAccessToken = function(ctx, next) {
       }
     },
     function(error, response, body) {
-      var fs = require('fs');
-      console.log('response', response);
-      console.log('body', body);
+      // var fs = require('fs');
+      console.log('token_type', body.token_type);
+      console.log('access_token', body.access_token);
       //  access_token, refresh_token, token_type, expires
 
-      fs.writeFile('/response.txt', JSON.stringify(response), (err) => {
-        if (err) throw err;
-        console.log('The file respnse.txt has been saved!');
-      });
+      // fs.writeFile('/response.txt', JSON.stringify(response), (err) => {
+      //   if (err) throw err;
+      //   console.log('The file respnse.txt has been saved!');
+      // });
 
-      fs.writeFile('/body.txt', JSON.stringify(body), (err) => {
-        if (err) throw err;
-        console.log('The file body.txt has been saved!');
-      });
+      // fs.writeFile('/body.txt', JSON.stringify(body), (err) => {
+      //   if (err) throw err;
+      //   console.log('The file body.txt has been saved!');
+      // });
 
     });
 
