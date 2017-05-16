@@ -16,8 +16,9 @@ exports.forAccessToken = function(ctx, next) {
     },
     function(error, response, body) {
       // var fs = require('fs');
-      console.log('token_type', body.token_type);
-      console.log('access_token', body.access_token);
+      console.log(body);
+      console.log('token_type', body.query.token_type);
+      console.log('access_token', body.query.access_token);
       //  access_token, refresh_token, token_type, expires
 
       // fs.writeFile('/response.txt', JSON.stringify(response), (err) => {
