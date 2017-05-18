@@ -13,8 +13,44 @@ $ npm install
 ```
 $ node server.js --port <port> --directory <directory with Tetris-Next>
 ```
+## Использование NGINX сервера
+Сервер **NGINX** в данном случае используется для переадресации с http на https.
 
-####This server supports chat
+### Установка
+Тут используется установка для Ubuntu 16.04
+```
+$deb http://nginx.org/packages/ubuntu/ xenial nginx
+$deb-src http://nginx.org/packages/ubuntu/ xenial nginx
+$sudo apt-get update
+$sudo apt-get install nginx
+```
+### Настройка
+Настройка для для переадресации с http на https. Файл конфигурации нужно искать в /etc/nginx/nginx.conf.
+```
+user  nginx;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+server {
+    listen 80;
+    listen [::]:80;
+    server_name <доменное имя> <www.доменное имя>;
+    return 301 https://<доменное имя>;
+  }
+}
+```
+Таже полезно заглядывать в файл логов /var/log/nginx/error.log
+
+#This server supports chat
 
 # Инструкция к серверной и клинской части модуля session
 
