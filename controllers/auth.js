@@ -29,8 +29,8 @@ exports.forAccessToken = function(ctx, next) {
           }
         },
         function(error, response, body) {
-          var res = JSON.parse(body);
-          console.log('answer: ',res);
+          //var res = JSON.parse(body);
+          console.log('answer: ',body);
         });
 
     });
