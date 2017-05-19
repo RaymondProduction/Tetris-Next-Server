@@ -23,7 +23,7 @@ app.use(bodyparser());
 router
   .get('/oauth', authController.forAccessToken)
   .post('/oauth', authController.accessToken)
-  .get('/', authController.mainPage);
+  .get('/test', authController.mainPage);
 
 app
   .use(router.routes())
