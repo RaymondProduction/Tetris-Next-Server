@@ -22,6 +22,8 @@ exports.forAccessToken = function(ctx, next) {
       console.log('token_type', res.token_type);
       console.log('access_token', res.access_token);
 
+      console.log('res=',res);
+
       request.get({
           url: 'https://api.github.com/user',
           headers: {
