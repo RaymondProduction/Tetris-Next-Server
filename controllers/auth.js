@@ -28,6 +28,7 @@ exports.forAccessToken = function(ctx, next) {
           url: 'https://api.github.com/user',
           headers: {
             authorization: 'token '+ res.token_type,
+            accept: 'application/json'
           }
         },
         function(error, response, body) {
