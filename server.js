@@ -19,7 +19,7 @@ var router = new Router();
 
 
 authController.getToken(function(n){
-  console.log(n);
+  console.log('YES=>',n);
 });
 
 

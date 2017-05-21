@@ -56,7 +56,7 @@ exports.forAccessToken =  function(ctx, next) {
 }
 
 exports.getToken = function(call){
-    call = callForToken;
+    callForToken = call;
 }
 
 exports.mainPage = function(ctx) {
