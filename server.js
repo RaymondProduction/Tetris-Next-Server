@@ -131,6 +131,7 @@ session.startServices();
 
 
 session.arrivedData('chat', function(id, message) {
+  console.log(message);
   session.sendData('chat', id, message);
 });
 
