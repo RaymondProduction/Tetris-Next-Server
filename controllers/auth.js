@@ -1,7 +1,7 @@
 exports.forAccessToken = function(ctx, next) {
   // загружаем client_id, client_secret из файла config.json
   const client = require('./load_config');
-  console.log(next);
+  var n = next;
   console.log('code ', ctx.query.code);
   var request = require('request');
   request.post({
@@ -38,7 +38,7 @@ exports.forAccessToken = function(ctx, next) {
             ctx.status = 301;
             ctx.redirect('/');
             ctx.body = 'Redirecting to shopping cart';
-            yield next;
+            yield n;
             console.log('yes');
           };
         });
