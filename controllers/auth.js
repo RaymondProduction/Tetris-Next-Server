@@ -1,7 +1,6 @@
 exports.forAccessToken = function(ctx, next) {
   // загружаем client_id, client_secret из файла config.json
   const client = require('./load_config');
-  console.log(client.client_id);
   console.log('code ', ctx.query.code);
   var request = require('request');
   request.post({
@@ -19,11 +18,7 @@ exports.forAccessToken = function(ctx, next) {
     },
     function(error, response, body) {
       var res = JSON.parse(body);
-      console.log('token_type', res.token_type);
       console.log('access_token', res.access_token);
-
-      console.log('res=',res);
-
       request.get({
           url: 'https://api.github.com/user',
           headers: {
