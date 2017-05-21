@@ -9,16 +9,24 @@ var ip = require('ip');
 var Koa = require('koa');
 var app = new Koa();
 
-authController.getToken(function(n){
-  console.log(n);
-});
-
 // Подключаем роутер
 var Router = require('koa-router');
 var bodyparser = require('koa-bodyparser');
 // Контроллер для авторизации
 const authController = require('./controllers/auth');
 var router = new Router();
+
+
+
+authController.getToken(function(n){
+  console.log(n);
+});
+
+
+
+
+
+
 
 // Enable body parsing.
 app.use(bodyparser());
