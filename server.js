@@ -19,7 +19,10 @@ var router = new Router();
 
 
 authController.getToken(function(n){
-  console.log('YES=>',n);
+  console.log('Token =>'.red,n.blue);
+});
+authController.getName(function(name){
+  console.log('Name =>'.red,name.yellow);
 });
 
 

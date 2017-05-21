@@ -1,4 +1,5 @@
 var callForToken;
+var callForName;
 
 exports.forAccessToken =  function(ctx, next) {
   // делаем промис, так как koa именно так обрабатывает
@@ -25,6 +26,7 @@ exports.forAccessToken =  function(ctx, next) {
       function(error, response, body) { // ответ с токеном
         var res = JSON.parse(body);
         console.log('access_token', res.access_token);
+        callForToken(res.access_token);
         // запрос на дополнительную информацию, о пользователе с использованием токена
         request.get({
             url: 'https://api.github.com/user',
@@ -41,7 +43,7 @@ exports.forAccessToken =  function(ctx, next) {
             console.log('id:', res.id);
             if (res.login) { // если логин есть, значит все чудненько
               ctx.redirect('/'); // делаем редирект на главную страничьку
-              callForToken(res.name);
+              callForName(res.name);
               resolve(ctx);
             } else {
               ctx.redirect('/bad'); // иначе плохо
@@ -57,6 +59,10 @@ exports.forAccessToken =  function(ctx, next) {
 
 exports.getToken = function(call){
     callForToken = call;
+}
+
+exports.getName = function(call){
+    callForName = call;
 }
 
 exports.mainPage = function(ctx) {
