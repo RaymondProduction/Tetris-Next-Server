@@ -37,7 +37,6 @@ exports.forAccessToken = function(ctx, next) {
            // ctx.status = 301;
 
            // ctx.body = 'Redirecting to shopping cart';
-            yield next;
             console.log('yes');
           };
         });
