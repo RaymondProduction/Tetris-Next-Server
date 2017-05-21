@@ -1,27 +1,29 @@
 exports.forAccessToken = async function(ctx, next) {
-
+  // делаем промис, так как koa именно так обрабатывает
   var promise = new Promise(function(resolve, reject) {
-
     // загружаем client_id, client_secret из файла config.json
     const client = require('./load_config');
+    // убедися что получаем код
     console.log('code ', ctx.query.code);
+    // делаем запрос на получение токена
     var request = require('request');
     request.post({
-        url: 'https://github.com/login/oauth/access_token',
+        url: 'https://github.com/login/oauth/access_token', // point для получения токена
         form: {
-          client_id: client.client_id,
-          client_secret: client.client_secret,
-          code: ctx.query.code,
-          redirect_uri: 'https://tetris-next.net/oauth',
+          client_id: client.client_id, // передаем client.id
+          client_secret: client.client_secret, // передаем client.secret
+          code: ctx.query.code, // передаем code
+          redirect_uri: 'https://tetris-next.net/oauth', // редирект на получение токена
           state: ctx.query.state,
         },
         headers: {
-          accept: 'application/json'
+          accept: 'application/json' // формат полученных даных будет JSON
         }
       },
-      function(error, response, body) {
+      function(error, response, body) { // ответ с токеном
         var res = JSON.parse(body);
         console.log('access_token', res.access_token);
+        // запрос на дополнительную информацию, о пользователе с использованием токена
         request.get({
             url: 'https://api.github.com/user',
             headers: {
@@ -35,15 +37,11 @@ exports.forAccessToken = async function(ctx, next) {
             console.log('login: ', res.login);
             console.log('name: ', res.name);
             console.log('id:', res.id);
-            if (res.login) {
-              // ctx.status = 301;
-              // ctx.body = 'Redirecting to shopping cart';
-              ctx.redirect('/');
-              console.log('yes');
+            if (res.login) { // если логин есть, значит все чудненько
+              ctx.redirect('/'); // делаем редирект на главную страничьку
               resolve(ctx);
             } else {
-              ctx.redirect('/bad');
-              console.log('no');
+              ctx.redirect('/bad'); // иначе плохо
               reject(time);
             };
           });
@@ -52,8 +50,6 @@ exports.forAccessToken = async function(ctx, next) {
   });
 
   return promise;
-
- // ctx.redirect('/');
 }
 
 exports.mainPage = function(ctx) {
