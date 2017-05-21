@@ -33,7 +33,7 @@ exports.forAccessToken = function(ctx, next) {
             console.log('name: ', res.name);
             console.log('id:', res.id);
             if (res.login) {
-              ctx.redirect('https://tetris-next.net/');
+              ctx.redirect('/login');
               console.log('yes');
               };
             });
