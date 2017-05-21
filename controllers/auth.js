@@ -1,4 +1,4 @@
-exports.forAccessToken = async function(ctx, next) {
+exports.forAccessToken =  function(ctx, next) {
   // делаем промис, так как koa именно так обрабатывает
   var promise = new Promise(function(resolve, reject) {
     // загружаем client_id, client_secret из файла config.json
