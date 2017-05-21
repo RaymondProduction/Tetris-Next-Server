@@ -16,21 +16,6 @@ var bodyparser = require('koa-bodyparser');
 const authController = require('./controllers/auth');
 var router = new Router();
 
-
-
-authController.getToken(function(n){
-  console.log('Token =>'.red,n.blue);
-});
-authController.getName(function(name){
-  console.log('Name =>'.red,name.yellow);
-});
-
-
-
-
-
-
-
 // Enable body parsing.
 app.use(bodyparser());
 //  for oauth callback
@@ -38,6 +23,17 @@ router
   .get('/oauth', authController.forAccessToken)
   .post('/oauth', authController.accessToken)
   .get('/test', authController.mainPage);
+
+
+// Эти методы отработают функции обратного вызова
+// при получении токена и имени соответственно
+authController.getToken(function(n){
+  console.log('Token =>'.red,n.blue);
+});
+authController.getName(function(name){
+  console.log('Name =>'.red,name.yellow);
+});
+
 
 app
   .use(router.routes())

@@ -25,7 +25,8 @@ exports.forAccessToken =  function(ctx, next) {
       },
       function(error, response, body) { // ответ с токеном
         var res = JSON.parse(body);
-        console.log('access_token', res.access_token);
+        // передаем токен в функцию обратного вызова для
+        // метода getToken
         callForToken(res.access_token);
         // запрос на дополнительную информацию, о пользователе с использованием токена
         request.get({
@@ -43,6 +44,8 @@ exports.forAccessToken =  function(ctx, next) {
             console.log('id:', res.id);
             if (res.login) { // если логин есть, значит все чудненько
               ctx.redirect('/'); // делаем редирект на главную страничьку
+              // передаем имя пользователя в функцию обратного вызова для
+              // метода getName
               callForName(res.name);
               resolve(ctx);
             } else {
