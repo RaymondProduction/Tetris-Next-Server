@@ -9,6 +9,9 @@ var ip = require('ip');
 var Koa = require('koa');
 var app = new Koa();
 
+authController.getToken(function(n){
+  console.log(n);
+});
 
 // Подключаем роутер
 var Router = require('koa-router');
@@ -117,9 +120,7 @@ var session = require('./session');
 session.socket(io);
 session.startServices();
 
-authController.getToken(function(n){
-  console.log(n);
-});
+
 
 
 session.arrivedData('chat', function(id, message) {
