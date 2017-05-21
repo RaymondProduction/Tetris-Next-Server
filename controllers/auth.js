@@ -3,7 +3,7 @@ exports.forAccessToken = function(ctx, next) {
   const client = require('./load_config');
   console.log('code ', ctx.query.code);
   var request = require('request');
-  yield request.post({
+  request.post({
       url: 'https://github.com/login/oauth/access_token',
       form: {
         client_id: client.client_id,
@@ -33,9 +33,11 @@ exports.forAccessToken = function(ctx, next) {
           console.log('name: ', res.name);
           console.log('id:', res.id);
           if (res.login) {
+            console.log('ctx=',ctx);
             ctx.status = 301;
             ctx.redirect('/');
             ctx.body = 'Redirecting to shopping cart';
+            yield next;
             console.log('yes');
           };
         });
