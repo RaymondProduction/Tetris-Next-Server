@@ -9,7 +9,7 @@ exports.forAccessToken = function(ctx, next) {
           client_id: client.client_id,
           client_secret: client.client_secret,
           code: ctx.query.code,
-          redirect_uri: 'https://tetris-next.net/',
+          redirect_uri: 'https://tetris-next.net/oauth',
           state: ctx.query.state,
         },
         headers: {
@@ -33,6 +33,7 @@ exports.forAccessToken = function(ctx, next) {
             console.log('name: ', res.name);
             console.log('id:', res.id);
             if (res.login) {
+              ctx.redirect('https://tetris-next.net/');
               console.log('yes');
               };
             });
