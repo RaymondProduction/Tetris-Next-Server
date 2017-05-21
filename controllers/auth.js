@@ -28,8 +28,10 @@ exports.forAccessToken = function(ctx, next) {
           }
         },
         function(error, response, body) {
-          //var res = JSON.parse(body);
-          console.log('answer: ',body);
+          var res = JSON.parse(body);
+          console.log('login: ',res.login);
+          console.log('name: ',res.name);
+          console.log('id:',res.id);
         });
 
     });
