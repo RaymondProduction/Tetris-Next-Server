@@ -3,7 +3,7 @@ exports.forAccessToken = function(ctx, next) {
   const client = require('./load_config');
   console.log('code ', ctx.query.code);
   var request = require('request');
-  request.post({
+  yield request.post({
       url: 'https://github.com/login/oauth/access_token',
       form: {
         client_id: client.client_id,
