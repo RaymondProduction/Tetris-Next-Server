@@ -1,48 +1,59 @@
-exports.forAccessToken = function(ctx, next) {
-  // загружаем client_id, client_secret из файла config.json
-  const client = require('./load_config');
-  console.log('code ', ctx.query.code);
-  var request = require('request');
-  return request.post({
-      url: 'https://github.com/login/oauth/access_token',
-      form: {
-        client_id: client.client_id,
-        client_secret: client.client_secret,
-        code: ctx.query.code,
-        redirect_uri: 'https://tetris-next.net/oauth',
-        state: ctx.query.state,
-      },
-      headers: {
-        accept: 'application/json'
-      }
-    },
-    function(error, response, body) {
-      var res = JSON.parse(body);
-      console.log('access_token', res.access_token);
-      return request.get({
-          url: 'https://api.github.com/user',
-          headers: {
-            'authorization': 'token ' + res.access_token,
-            'accept': 'application/json',
-            'user-agent': 'node.js'
-          }
-        },
-        function(error, response, body) {
-          var res = JSON.parse(body);
-          console.log('login: ', res.login);
-          console.log('name: ', res.name);
-          console.log('id:', res.id);
-          if (res.login) {
-           // ctx.status = 301;
-           // ctx.body = 'Redirecting to shopping cart';
-            ctx.redirect('/');
-            console.log('yes');
-            return next();
-          };
-        });
+exports.forAccessToken = async function(ctx, next) {
 
-    });
-  // ctx.redirect('/');
+  var promise = new Promise(function(resolve, reject) {
+
+    // загружаем client_id, client_secret из файла config.json
+    const client = require('./load_config');
+    console.log('code ', ctx.query.code);
+    var request = require('request');
+    request.post({
+        url: 'https://github.com/login/oauth/access_token',
+        form: {
+          client_id: client.client_id,
+          client_secret: client.client_secret,
+          code: ctx.query.code,
+          redirect_uri: 'https://tetris-next.net/oauth',
+          state: ctx.query.state,
+        },
+        headers: {
+          accept: 'application/json'
+        }
+      },
+      function(error, response, body) {
+        var res = JSON.parse(body);
+        console.log('access_token', res.access_token);
+        request.get({
+            url: 'https://api.github.com/user',
+            headers: {
+              'authorization': 'token ' + res.access_token,
+              'accept': 'application/json',
+              'user-agent': 'node.js'
+            }
+          },
+          function(error, response, body) {
+            var res = JSON.parse(body);
+            console.log('login: ', res.login);
+            console.log('name: ', res.name);
+            console.log('id:', res.id);
+            if (res.login) {
+              // ctx.status = 301;
+              // ctx.body = 'Redirecting to shopping cart';
+              ctx.redirect('/');
+              console.log('yes');
+              resolve(ctx);
+            } else {
+              ctx.redirect('/bad');
+              console.log('no');
+              reject(time);
+            };
+          });
+      });
+
+  });
+
+  return promise;
+
+ // ctx.redirect('/');
 }
 
 exports.mainPage = function(ctx) {
