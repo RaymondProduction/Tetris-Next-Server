@@ -33,9 +33,7 @@ exports.forAccessToken = function(ctx, next) {
             console.log('name: ', res.name);
             console.log('id:', res.id);
             if (res.login) {
-              request.get({
-                  url: 'https://tetris-next.net/'
-                });
+              console.log('yes');
               };
             });
 
