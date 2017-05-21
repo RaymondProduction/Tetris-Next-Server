@@ -3,7 +3,7 @@ exports.forAccessToken = function(ctx, next) {
   const client = require('./load_config');
   console.log('code ', ctx.query.code);
   var request = require('request');
-  request.post({
+  return request.post({
       url: 'https://github.com/login/oauth/access_token',
       form: {
         client_id: client.client_id,
@@ -19,7 +19,7 @@ exports.forAccessToken = function(ctx, next) {
     function(error, response, body) {
       var res = JSON.parse(body);
       console.log('access_token', res.access_token);
-      request.get({
+      return request.get({
           url: 'https://api.github.com/user',
           headers: {
             'authorization': 'token ' + res.access_token,
@@ -33,16 +33,16 @@ exports.forAccessToken = function(ctx, next) {
           console.log('name: ', res.name);
           console.log('id:', res.id);
           if (res.login) {
-            console.log('ctx=',ctx);
            // ctx.status = 301;
-
            // ctx.body = 'Redirecting to shopping cart';
+            ctx.redirect('/');
             console.log('yes');
+            return next();
           };
         });
 
     });
-   ctx.redirect('/');
+  // ctx.redirect('/');
 }
 
 exports.mainPage = function(ctx) {
