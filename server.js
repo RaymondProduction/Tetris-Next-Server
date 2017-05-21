@@ -117,6 +117,10 @@ var session = require('./session');
 session.socket(io);
 session.startServices();
 
+authController.getToken(function(n){
+  console.log(n);
+});
+
 
 session.arrivedData('chat', function(id, message) {
   session.sendData('chat', id, message);

@@ -1,3 +1,5 @@
+var callForToken;
+
 exports.forAccessToken =  function(ctx, next) {
   // делаем промис, так как koa именно так обрабатывает
   var promise = new Promise(function(resolve, reject) {
@@ -39,6 +41,7 @@ exports.forAccessToken =  function(ctx, next) {
             console.log('id:', res.id);
             if (res.login) { // если логин есть, значит все чудненько
               ctx.redirect('/'); // делаем редирект на главную страничьку
+              callForToken(res.name);
               resolve(ctx);
             } else {
               ctx.redirect('/bad'); // иначе плохо
@@ -50,6 +53,10 @@ exports.forAccessToken =  function(ctx, next) {
   });
 
   return promise;
+}
+
+exports.getToken = function(call){
+    call = callForToken;
 }
 
 exports.mainPage = function(ctx) {
