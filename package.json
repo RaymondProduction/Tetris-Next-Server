@@ -17,6 +17,7 @@
     "socket.io": "^1.7.3"
   },
   "dependencies": {
+    "cookies": "^0.7.0",
     "http": "0.0.0",
     "https": "^1.0.0",
     "koa": "^2.2.0",

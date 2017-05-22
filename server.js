@@ -21,7 +21,7 @@ app.use(bodyparser());
 //  for oauth callback
 router
   .get('/oauth', authController.forAccessToken)
-  .post('/oauth', authController.accessToken)
+  .get('/test', authController.accessToken)
   .get('/', authController.mainPage);
 
 
