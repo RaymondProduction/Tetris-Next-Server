@@ -43,13 +43,13 @@ exports.forAccessToken =  function(ctx, next) {
             console.log('name: ', res.name);
             console.log('id:', res.id);
             if (res.login) { // если логин есть, значит все чудненько
-              ctx.redirect('/'); // делаем редирект на главную страничьку
+              ctx.redirect('/game'); // делаем редирект на главную страничьку
               // передаем имя пользователя в функцию обратного вызова для
               // метода getName
               callForName(res.name);
               resolve(ctx);
             } else {
-              ctx.redirect('/bad'); // иначе плохо
+              ctx.redirect('/'); // иначе плохо
               reject(time);
             };
           });

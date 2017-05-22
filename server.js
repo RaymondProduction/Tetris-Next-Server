@@ -22,7 +22,7 @@ app.use(bodyparser());
 router
   .get('/oauth', authController.forAccessToken)
   .post('/oauth', authController.accessToken)
-  .get('/test', authController.mainPage);
+  .get('/', authController.mainPage);
 
 
 // Эти методы отработают функции обратного вызова
@@ -103,7 +103,7 @@ app.use(function*(next) {
   yield next;
   var url = this.url;
   console.log('GET => '.magenta, url, '\tContent type: '.yellow, staticContent[path.extname(url)]);
-  if (url == '/') {
+  if (url == '/game') {
     url = '/index.html';
   }
   this.type = staticContent[path.extname(url)];
@@ -126,8 +126,6 @@ var session = require('./session');
 
 session.socket(io);
 session.startServices();
-
-
 
 
 session.arrivedData('chat', function(id, message) {
