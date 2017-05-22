@@ -1,5 +1,6 @@
 var callForToken;
 var callForName;
+var accessToken;
 
 exports.forAccessToken =  function(ctx, next) {
   // делаем промис, так как koa именно так обрабатывает
@@ -28,6 +29,7 @@ exports.forAccessToken =  function(ctx, next) {
         // передаем токен в функцию обратного вызова для
         // метода getToken
         callForToken(res.access_token);
+        accessToken = res.access_token;
         // запрос на дополнительную информацию, о пользователе с использованием токена
         request.get({
             url: 'https://api.github.com/user',
@@ -43,7 +45,7 @@ exports.forAccessToken =  function(ctx, next) {
             console.log('name: ', res.name);
             console.log('id:', res.id);
             if (res.login) { // если логин есть, значит все чудненько
-              ctx.redirect('/game?login='+res.login); // делаем редирект на главную страничьку
+              ctx.redirect('/game?login='+accessToken); // делаем редирект на главную страничьку
               // передаем имя пользователя в функцию обратного вызова для
               // метода getName
               callForName(res.name);
