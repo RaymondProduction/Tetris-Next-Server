@@ -82,5 +82,5 @@ exports.mainPage = function(ctx) {
 exports.accessToken = function(ctx, next) {
   console.log('request!!!! =>', ctx.request.body);
   ctx.type = 'html'
-  ctx.body = 'TEST!!!!';
+  ctx.body = ctx.cookies.get;
 }
