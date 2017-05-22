@@ -103,7 +103,7 @@ app.use(function*(next) {
   yield next;
   var url = this.url;
   console.log('GET => '.magenta, url, '\tContent type: '.yellow, staticContent[path.extname(url)]);
-  if ( url.substring(0,5)=='/game/') {
+  if ( url.indexOf('/game')>-1) {
     url = '/index.html';
   }
   this.type = staticContent[path.extname(url)];
