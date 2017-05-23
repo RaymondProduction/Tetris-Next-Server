@@ -10,19 +10,11 @@ exports.forAccessTokenFacebook = function(ctx,next){
     console.log('code ', ctx.query.code);
     // делаем запрос на получение токена
     var request = require('request');
-    // GET https://graph.facebook.com/v2.9/oauth/access_token?
-//    client_id={app-id}
-//    &redirect_uri={redirect-uri}
-//    &client_secret={app-secret}
-//    &code={code-parameter}
     var urlForRequest = 'https://graph.facebook.com/v2.9/oauth/access_token?'
     +'redirect_uri=https://tetris-next.net/oauthf&'
     +'client_id='+client.facebook.client_id+'&'
     +'client_secret='+client.facebook.client_secret+'&'
     +'code='+ctx.query.code;
-
-    console.log('=///=>',urlForRequest);
-
     request.get({
         url: urlForRequest,
         headers: {
@@ -30,18 +22,44 @@ exports.forAccessTokenFacebook = function(ctx,next){
         }
       },
       function(error, response, body) { // ответ с токеном
-        console.log('!!!!=>',body);
+        var res = JSON.parse(body);
+        console.log('Token of Facebook',res.access_token);
+        //graph.facebook.com
+        request.get({
+            url: 'https://graph.facebook.com',
+            headers: {
+              'authorization': 'token ' + res.access_token,
+              'accept': 'application/json',
+              'user-agent': 'node.js'
+            }
+          },
+          function(error, response, body) {
+
+            console.log(body);
+
+            // var res = JSON.parse(body);
+            // console.log('login: ', res.login);
+            // console.log('name: ', res.name);
+            // console.log('id:', res.id);
+            // if (res.login) { // если логин есть, значит все чудненько
+            //   // отправим куки со значением токена
+            //   ctx.cookies.set('token', accessToken);
+            //   // делаем редирект на главную страничьку
+            //   ctx.redirect('/game');
+            //   // передаем имя пользователя в функцию обратного вызова для
+            //   // метода getName
+            //   callForName(res.name);
+            //   resolve(ctx);
+            // } else {
+            //   ctx.redirect('/'); // иначе плохо
+            //   reject(ctx);
+            // };
+          });
+
+
+
       });
-
   });
-
-
-
-   console.log('client id:', client.facebook.client_id);
-   console.log('client secret',client.facebook.client_secret);
-   console.log('code from facebook', ctx.query);
-
-
 }
 
 exports.forAccessToken = function(ctx, next) {
