@@ -25,8 +25,8 @@ exports.forAccessTokenFacebook = function(ctx,next){
         var res = JSON.parse(body);
         console.log('Token of Facebook ',res);
         //graph.facebook.com
-        request.get({
-            url: 'https://graph.facebook.com?access_token='+res.access_token,
+        request.get({ ///me?fields=id,name
+            url: 'https://graph.facebook.com/me?fields=id,name&access_token='+res.access_token,
             headers: {
               'authorization': 'access_token ' + res.access_token,
               'accept': 'application/json',
