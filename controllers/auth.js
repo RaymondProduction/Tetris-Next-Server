@@ -102,7 +102,7 @@ exports.test = function(ctx, next) {
         if (res.login) { // если логин есть, значит все чудненько
           // отправим куки со значением токена
           ctx.type = 'html'
-          ctx.body = ctx.cookies.get('token');
+          ctx.body = res;
           resolve(ctx);
         } else {
           reject(ctx);
