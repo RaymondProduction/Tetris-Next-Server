@@ -48,7 +48,7 @@ exports.forAccessToken = function(ctx, next) {
               // отправим куки со значением токена
               ctx.cookies.set('token', accessToken);
               // делаем редирект на главную страничьку
-              ctx.redirect('/game?t=' + accessToken);
+              ctx.redirect('/game');
               // передаем имя пользователя в функцию обратного вызова для
               // метода getName
               callForName(res.name);
@@ -74,16 +74,17 @@ exports.getName = function(call) {
 }
 
 exports.mainPage = function(ctx) {
-  var fs = require('fs');
-  ctx.type = 'html'
-  ctx.body = fs.createReadStream('views/oauth.html');
+  if (ctx.cookies.get('token')) {
+    ctx.redirect('/game');
+  } else {
+    var fs = require('fs');
+    ctx.type = 'html'
+    ctx.body = fs.createReadStream('views/oauth.html');
+  };
 }
 
-exports.test = function(ctx, next) {
+exports.additionalInformationaAboutUser = function(ctx, next) {
   var promise = new Promise(function(resolve, reject) {
-    console.log('request!!!! =>', ctx.request.body);
-    ctx.type = 'html'
-    ctx.body = ctx.cookies.get('token');
     // делаем запрос на получение дополнительной информации
     //  о пользователе
     var request = require('request');
