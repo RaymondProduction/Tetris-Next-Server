@@ -28,7 +28,7 @@ exports.forAccessTokenFacebook = function(ctx,next){
         request.get({
             url: 'https://graph.facebook.com',
             headers: {
-              'authorization': 'token ' + res.access_token,
+              'authorization': 'access_token ' + res.access_token,
               'accept': 'application/json',
               'user-agent': 'node.js'
             }
