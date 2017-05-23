@@ -79,7 +79,7 @@ exports.mainPage = function(ctx) {
   ctx.body = fs.createReadStream('views/oauth.html');
 }
 
-exports.accessToken = function(ctx, next) {
+exports.test = function(ctx, next) {
   console.log('request!!!! =>', ctx.request.body);
   ctx.type = 'html'
   ctx.body = ctx.cookies.get('token');
