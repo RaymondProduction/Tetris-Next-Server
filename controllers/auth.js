@@ -84,7 +84,8 @@ exports.test = function(ctx, next) {
     console.log('request!!!! =>', ctx.request.body);
     ctx.type = 'html'
     ctx.body = ctx.cookies.get('token');
-        // делаем запрос на получение токена
+    // делаем запрос на получение дополнительной информации
+    //  о пользователе
     var request = require('request');
     request.get({
         url: 'https://api.github.com/user',
@@ -96,15 +97,14 @@ exports.test = function(ctx, next) {
       },
       function(error, response, body) {
         var res = JSON.parse(body);
-        console.log('login: ', res.login);
-        console.log('name: ', res.name);
-        console.log('id:', res.id);
-        if (res.login) { // если логин есть, значит все чудненько
+        if (res.login) {
+          // если логин есть, значит все чудненько
           // отправим куки со значением токена
           ctx.type = 'html'
           ctx.body = res;
           resolve(ctx);
         } else {
+          ctx.body = 'Error: No login';
           reject(ctx);
         };
       });
