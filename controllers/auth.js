@@ -23,7 +23,7 @@ exports.forAccessTokenFacebook = function(ctx,next){
       },
       function(error, response, body) { // ответ с токеном
         var res = JSON.parse(body);
-        console.log('Token of Facebook',body);
+        console.log('Token of Facebook ',res);
         //graph.facebook.com
         request.get({
             url: 'https://graph.facebook.com?access_token='+res.access_token,
