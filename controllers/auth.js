@@ -4,9 +4,41 @@ var accessToken;
 // загружаем client_id, client_secret из файла config.json
 const client = require('./load_config');
 exports.forAccessTokenFacebook = function(ctx,next){
+  // делаем промис, так как koa именно так обрабатывает
+  var promise = new Promise(function(resolve, reject) {
+    // убедися что получаем код
+    console.log('code ', ctx.query.code);
+    // делаем запрос на получение токена
+    var request = require('request');
+    // GET https://graph.facebook.com/v2.9/oauth/access_token?
+//    client_id={app-id}
+//    &redirect_uri={redirect-uri}
+//    &client_secret={app-secret}
+//    &code={code-parameter}
+    var urlForRequest = 'https://graph.facebook.com/v2.9/oauth/access_token?'
+    +'redirect_uri=https://tetris-next.net/oauthf&'
+    +'client_id='+client.facebook.client_id+'&'
+    +'client_secret='+client.facebook.client_secret+'&'
+    +'code='+ctx.query.code;
+    request.get({
+        url: urlForRequest,
+        headers: {
+          accept: 'application/json' // формат полученных даных будет JSON
+        }
+      },
+      function(error, response, body) { // ответ с токеном
+        console.log('!!!!=>',body);
+      });
+
+  });
+
+
+
    console.log('client id:', client.facebook.client_id);
    console.log('client secret',client.facebook.client_secret);
    console.log('code from facebook', ctx.query);
+
+
 }
 
 exports.forAccessToken = function(ctx, next) {
