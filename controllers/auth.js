@@ -20,6 +20,9 @@ exports.forAccessTokenFacebook = function(ctx,next){
     +'client_id='+client.facebook.client_id+'&'
     +'client_secret='+client.facebook.client_secret+'&'
     +'code='+ctx.query.code;
+
+    console.log('=///=>',urlForRequest);
+
     request.get({
         url: urlForRequest,
         headers: {
