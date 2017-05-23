@@ -84,6 +84,8 @@ exports.test = function(ctx, next) {
     console.log('request!!!! =>', ctx.request.body);
     ctx.type = 'html'
     ctx.body = ctx.cookies.get('token');
+        // делаем запрос на получение токена
+    var request = require('request');
     request.get({
         url: 'https://api.github.com/user',
         headers: {
