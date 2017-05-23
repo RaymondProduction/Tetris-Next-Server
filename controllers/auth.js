@@ -2,7 +2,7 @@ var callForToken;
 var callForName;
 var accessToken;
 
-exports.forAccessToken =  function(ctx, next) {
+exports.forAccessToken = function(ctx, next) {
   // делаем промис, так как koa именно так обрабатывает
   var promise = new Promise(function(resolve, reject) {
     // загружаем client_id, client_secret из файла config.json
@@ -48,14 +48,14 @@ exports.forAccessToken =  function(ctx, next) {
               // отправим куки со значением токена
               ctx.cookies.set('token', accessToken);
               // делаем редирект на главную страничьку
-              ctx.redirect('/game?t='+accessToken);
+              ctx.redirect('/game?t=' + accessToken);
               // передаем имя пользователя в функцию обратного вызова для
               // метода getName
               callForName(res.name);
               resolve(ctx);
             } else {
               ctx.redirect('/'); // иначе плохо
-              reject(time);
+              reject(ctx);
             };
           });
       });
@@ -65,12 +65,12 @@ exports.forAccessToken =  function(ctx, next) {
   return promise;
 }
 
-exports.getToken = function(call){
-    callForToken = call;
+exports.getToken = function(call) {
+  callForToken = call;
 }
 
-exports.getName = function(call){
-    callForName = call;
+exports.getName = function(call) {
+  callForName = call;
 }
 
 exports.mainPage = function(ctx) {
@@ -80,7 +80,32 @@ exports.mainPage = function(ctx) {
 }
 
 exports.test = function(ctx, next) {
-  console.log('request!!!! =>', ctx.request.body);
-  ctx.type = 'html'
-  ctx.body = ctx.cookies.get('token');
+  var promise = new Promise(function(resolve, reject) {
+    console.log('request!!!! =>', ctx.request.body);
+    ctx.type = 'html'
+    ctx.body = ctx.cookies.get('token');
+    request.get({
+        url: 'https://api.github.com/user',
+        headers: {
+          'authorization': 'token ' + ctx.cookies.get('token'),
+          'accept': 'application/json',
+          'user-agent': 'node.js'
+        }
+      },
+      function(error, response, body) {
+        var res = JSON.parse(body);
+        console.log('login: ', res.login);
+        console.log('name: ', res.name);
+        console.log('id:', res.id);
+        if (res.login) { // если логин есть, значит все чудненько
+          // отправим куки со значением токена
+          ctx.type = 'html'
+          ctx.body = ctx.cookies.get('token');
+          resolve(ctx);
+        } else {
+          reject(ctx);
+        };
+      });
+  });
+  return promise;
 }
