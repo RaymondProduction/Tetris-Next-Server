@@ -21,6 +21,7 @@ app.use(bodyparser());
 //  for oauth callback
 router
   .get('/oauth', authController.forAccessToken)
+  .get('/oauthf', authController.forAccessTokenFacebook)
   .post('/addinf', authController.additionalInformationaAboutUser)
   .get('/', authController.mainPage);
 

@@ -2,6 +2,10 @@ var callForToken;
 var callForName;
 var accessToken;
 
+exports.forAccessTokenFacebook = function(ctx,next){
+   console.log('code from facebook', ctx.query.code);
+}
+
 exports.forAccessToken = function(ctx, next) {
   // делаем промис, так как koa именно так обрабатывает
   var promise = new Promise(function(resolve, reject) {
