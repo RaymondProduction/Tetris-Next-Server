@@ -1,16 +1,17 @@
 var callForToken;
 var callForName;
 var accessToken;
-
+// загружаем client_id, client_secret из файла config.json
+const client = require('./load_config');
 exports.forAccessTokenFacebook = function(ctx,next){
-   console.log('code from facebook', ctx.query.code);
+   console.log('client id:', client.facebook.client_id);
+   console.log('client secret',client.facebook.client_secret);
+   console.log('code from facebook', ctx.query);
 }
 
 exports.forAccessToken = function(ctx, next) {
   // делаем промис, так как koa именно так обрабатывает
   var promise = new Promise(function(resolve, reject) {
-    // загружаем client_id, client_secret из файла config.json
-    const client = require('./load_config');
     // убедися что получаем код
     console.log('code ', ctx.query.code);
     // делаем запрос на получение токена
@@ -18,8 +19,8 @@ exports.forAccessToken = function(ctx, next) {
     request.post({
         url: 'https://github.com/login/oauth/access_token', // point для получения токена
         form: {
-          client_id: client.client_id, // передаем client.id
-          client_secret: client.client_secret, // передаем client.secret
+          client_id: client.github.client_id, // передаем client.id
+          client_secret: client.github.client_secret, // передаем client.secret
           code: ctx.query.code, // передаем code
           redirect_uri: 'https://tetris-next.net/oauth', // редирект на получение токена
           state: ctx.query.state,
