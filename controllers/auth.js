@@ -158,9 +158,17 @@ exports.additionalInformationaAboutUser = function(ctx, next) {
           'accept': 'application/json',
           'user-agent': 'node.js'
         }
-      };
+    };
 
-    request.get(options['github'],
+     options['facebook']= {
+        url: 'https://graph.facebook.com/me?fields=id,name,email&access_token='+res.access_token,
+        headers: {
+          'authorization': 'access_token ' + res.access_token,
+          'accept': 'application/json',
+          'user-agent': 'node.js'}
+    };
+
+    request.get(options[ctx.cookies.get('oauth')],
       function(error, response, body) {
         var res = JSON.parse(body);
         if (res.login) {
