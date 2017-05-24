@@ -38,7 +38,7 @@ exports.forAccessTokenFacebook = function(ctx,next){
              var res = JSON.parse(body);
              console.log('name: ', res.name);
              console.log('id:', res.id);
-            if (res.login) { // если логин есть, значит все чудненько
+            if (res.name) { // если логин есть, значит все чудненько
               // отправим куки со значением токена
               ctx.cookies.set('token', accessToken);
               // делаем редирект на главную страничьку
