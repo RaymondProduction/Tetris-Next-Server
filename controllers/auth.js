@@ -23,6 +23,7 @@ exports.forAccessTokenFacebook = function(ctx,next){
       },
       function(error, response, body) { // ответ с токеном
         var res = JSON.parse(body);
+        console.log(res.access_token);
         accessToken = res.access_token;
         // запрос на дополнительную информацию, о пользователе с использованием токена
         request.get({
