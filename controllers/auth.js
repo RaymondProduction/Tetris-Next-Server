@@ -161,9 +161,9 @@ exports.additionalInformationaAboutUser = function(ctx, next) {
     };
 
      options['facebook']= {
-        url: 'https://graph.facebook.com/me?fields=id,name,email&access_token='+res.access_token,
+        url: 'https://graph.facebook.com/me?fields=id,name,email&access_token='+ ctx.cookies.get('token'),
         headers: {
-          'authorization': 'access_token ' + res.access_token,
+          'authorization': 'access_token ' +  ctx.cookies.get('token'),
           'accept': 'application/json',
           'user-agent': 'node.js'}
     };
