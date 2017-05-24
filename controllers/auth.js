@@ -57,6 +57,8 @@ exports.forAccessTokenFacebook = function(ctx,next){
 
       });
   });
+
+  return promise;
 }
 
 exports.forAccessToken = function(ctx, next) {
