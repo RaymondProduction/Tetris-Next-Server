@@ -171,7 +171,7 @@ exports.additionalInformationaAboutUser = function(ctx, next) {
     request.get(options[ctx.cookies.get('oauth')],
       function(error, response, body) {
         var res = JSON.parse(body);
-        if (res.login) {
+        if (res.name) {
           // если логин есть, значит все чудненько
           // отправим куки со значением токена
           ctx.type = 'html'
