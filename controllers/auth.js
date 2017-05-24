@@ -26,7 +26,7 @@ exports.forAccessTokenFacebook = function(ctx,next){
         console.log('Token of Facebook ',res);
         //graph.facebook.com
         request.get({ ///me?fields=id,name
-            url: 'https://graph.facebook.com/me?fields=id,name,email,first_name&access_token='+res.access_token,
+            url: 'https://graph.facebook.com/me?fields=id,name,email&access_token='+res.access_token,
             headers: {
               'authorization': 'access_token ' + res.access_token,
               'accept': 'application/json',
@@ -35,12 +35,9 @@ exports.forAccessTokenFacebook = function(ctx,next){
           },
           function(error, response, body) {
 
-            console.log(body);
-
-            // var res = JSON.parse(body);
-            // console.log('login: ', res.login);
-            // console.log('name: ', res.name);
-            // console.log('id:', res.id);
+             var res = JSON.parse(body);
+             console.log('name: ', res.name);
+             console.log('id:', res.id);
             // if (res.login) { // если логин есть, значит все чудненько
             //   // отправим куки со значением токена
             //   ctx.cookies.set('token', accessToken);
