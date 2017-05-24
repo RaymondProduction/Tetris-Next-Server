@@ -20,7 +20,7 @@ var router = new Router();
 app.use(bodyparser());
 //  for oauth callback
 router
-  .get('/logout',authController.logOut);
+  .get('/logout',authController.logOut)
   .get('/oauth', authController.forAccessToken)
   .get('/oauthf', authController.forAccessTokenFacebook)
   .post('/addinf', authController.additionalInformationaAboutUser)
