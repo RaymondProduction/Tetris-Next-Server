@@ -133,8 +133,14 @@ exports.getName = function(call) {
   callForName = call;
 }
 
+exports.logOut = function(ctx){
+  ctx.cookies.set('token', null);
+  ctx.cookies.set('oauth', null);
+  ctx.redirect('/');
+}
+
 exports.mainPage = function(ctx) {
-  if (ctx.cookies.get('token')) {
+  if (ctx.cookies.get('token') && ctx.cookies.get('token')!=null) {
     ctx.redirect('/game');
   } else {
     var fs = require('fs');
@@ -172,7 +178,7 @@ exports.additionalInformationaAboutUser = function(ctx, next) {
       function(error, response, body) {
         var res = JSON.parse(body);
         if (res.name) {
-          // если логин есть, значит все чудненько
+          // если имя есть, значит все чудненько
           // отправим куки со значением токена
           ctx.type = 'html'
           ctx.body = res;
