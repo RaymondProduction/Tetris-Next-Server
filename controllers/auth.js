@@ -42,6 +42,7 @@ exports.forAccessTokenFacebook = function(ctx,next){
             if (res.name) { // если логин есть, значит все чудненько
               // отправим куки со значением токена
               ctx.cookies.set('token', accessToken);
+              ctx.cookies.set('oauth','facebook');
               // делаем редирект на главную страничьку
               ctx.redirect('/game');
               // передаем имя пользователя в функцию обратного вызова для
@@ -105,6 +106,7 @@ exports.forAccessToken = function(ctx, next) {
             if (res.login) { // если логин есть, значит все чудненько
               // отправим куки со значением токена
               ctx.cookies.set('token', accessToken);
+              ctx.cookies.set('oauth','github');
               // делаем редирект на главную страничьку
               ctx.redirect('/game');
               // передаем имя пользователя в функцию обратного вызова для
@@ -146,14 +148,19 @@ exports.additionalInformationaAboutUser = function(ctx, next) {
     // делаем запрос на получение дополнительной информации
     //  о пользователе
     var request = require('request');
-    request.get({
+
+    var options = {};
+
+    options['github']= {
         url: 'https://api.github.com/user',
         headers: {
           'authorization': 'token ' + ctx.cookies.get('token'),
           'accept': 'application/json',
           'user-agent': 'node.js'
         }
-      },
+      };
+
+    request.get(options['github'],
       function(error, response, body) {
         var res = JSON.parse(body);
         if (res.login) {
